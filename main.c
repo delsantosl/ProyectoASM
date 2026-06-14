@@ -101,7 +101,7 @@ void imprimir_mapa(int recol, int total, int jFila, int jCol) {
             }else if (mapa[i][j] == 'D') {
                 impMapa[pos++] = (char)176;  // puertas
             }else if (mapa[i][j] == 'E') {
-                impMapa[pos++] = (char)175;  // salida
+                impMapa[pos++] = (char)245;  // salida
             }
             impMapa[pos++] = ' ';           // espacio para que el mapa no se vea alargado
         }
