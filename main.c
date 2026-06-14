@@ -73,12 +73,17 @@ void cargar_mapa(const char *archivo) {
 }
 
 void imprimir_mapa() {
+    char impMapa[FILAS * (COLS * 2 + 1) + 1];  // guarda todo el mapa para imprimirlo, (COLS*2+1) es porque es el caracter del mapa mas el espacio mas el salto de linea
+    int pos = 0;
     for (int i = 0; i < FILAS; i++) {
         for (int j = 0; j < COLS; j++) {
-            printf("%c ", mapa[i][j]);  //impresion del caracter del mapa (con un espacio para que el mapa no sea vea alargado)
+            impMapa[pos++] = mapa[i][j];    // caracter del mapa
+            impMapa[pos++] = ' ';           // espacio para que el mapa no se vea alargado
         }
-        printf("%c", '\n');
+        impMapa[pos++] = '\n';
     }
+    impMapa[pos] = '\0';    //terminar la cadena
+    fputs(impMapa, stdout); //imprimir todo de una vez para mayor velocidad
 }
 
 // buscar la posicion inicial del jugador en el mapa
