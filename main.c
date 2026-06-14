@@ -120,6 +120,7 @@ void jugar_nivel(int num_nivel) {
             movimiento(&mapa[0][0], COLS, jugador_fila, jugador_col, nueva_fila, nueva_col);
             jugador_fila = nueva_fila;
             jugador_col  = nueva_col;
+            system("cls");
             imprimir_mapa();
         }
     }
