@@ -72,7 +72,7 @@ void cargar_mapa(const char *archivo) {
     fclose(f);
 }
 
-void imprimir_mapa() {
+void imprimir_mapa(int recol, int total) {
     char impMapa[FILAS * (COLS * 2 + 1) + 1];  // guarda todo el mapa para imprimirlo, (COLS*2+1) es porque es el caracter del mapa mas el espacio mas el salto de linea
     int pos = 0;
     for (int i = 0; i < FILAS; i++) {
@@ -82,6 +82,8 @@ void imprimir_mapa() {
         }
         impMapa[pos++] = '\n';
     }
+    printf( "Monedas %d / %d", recol, total);
+    printf("\n");
     impMapa[pos] = '\0';    //terminar la cadena
     fputs(impMapa, stdout); //imprimir todo de una vez para mayor velocidad
 }
@@ -108,7 +110,9 @@ void jugar_nivel(int num_nivel) {
     printf("\nTotal de monedas: %d\n", totalMonedas);
     int jugador_fila, jugador_col;
     buscar_jugador(&jugador_fila, &jugador_col);
-    imprimir_mapa();    //imprimir el mapa del nivel cargado
+
+    int Mrecolectadas=0;
+    imprimir_mapa(Mrecolectadas,totalMonedas);    //imprimir el mapa del nivel cargado
     int nueva_fila, nueva_col;
     char tecla;
     while (1) { //prueba presion de teclas
@@ -122,11 +126,15 @@ void jugar_nivel(int num_nivel) {
         else if (tecla == 'q' || tecla == 'Q') break;           //salir del nivel (volver al menu principal)
         else continue;                                          //si se presiona otra tecla no hace nada
         if (validar_movimiento(&mapa[0][0], COLS, nueva_fila, nueva_col)) {
+            if(mapa[nueva_fila][nueva_col]== 'M'){
+                Mrecolectadas++;
+                mapa[nueva_fila][nueva_col]='.';
+            }
             movimiento(&mapa[0][0], COLS, jugador_fila, jugador_col, nueva_fila, nueva_col);
             jugador_fila = nueva_fila;
             jugador_col  = nueva_col;
             system("cls");
-            imprimir_mapa();
+            imprimir_mapa(Mrecolectadas,totalMonedas);
         }
     }
     // logica del nivel
