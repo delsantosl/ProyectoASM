@@ -23,6 +23,7 @@ char mapa[FILAS][COLS];
 //Menu principal (seleccion de niveles)
 int seleccionar_nivel() {
     int opcion;
+    char buf[100];  //variable auxiliar para validar opciones
     printf("=================================\n");
     printf("            BitQuest\n");
     printf("=================================\n");
@@ -33,7 +34,16 @@ int seleccionar_nivel() {
     printf("  0. Salir\n");
     printf("=================================\n");
     printf("Opcion: ");
-    scanf("%d", &opcion);
+    //validacion de la opcion seleccionada
+    fgets(buf, sizeof(buf), stdin);
+    opcion = atoi(buf);
+    if (buf[0] >= '1' && buf[0] <= '3') {
+        opcion = atoi(buf);
+    } else if (buf[0] == '0') {
+        opcion = 0;
+    } else {
+        opcion = -1;  // cualquier cosa que no sea numero es invalida
+    }
     return opcion;
 }
 
