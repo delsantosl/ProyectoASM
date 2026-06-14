@@ -1,17 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define FILAS 60
+#define COLS  60
 
 const char *archivos_niveles[3] = {
-    "Nivel_1.txt",
-    "Nivel_2.txt",
-    "Nivel_3.txt"
+    "Niveles/Nivel_1.txt",
+    "Niveles/Nivel_2.txt",
+    "Niveles/Nivel_3.txt"
 };
+
+char mapa[FILAS][COLS];
 
 int seleccionar_nivel() {
     int opcion;
     printf("=================================\n");
-    printf("   BitQuest: Explorador de Matrices\n");
+    printf("            BitQuest\n");
     printf("=================================\n");
     printf("Selecciona un nivel:\n");
     printf("  1. Nivel 1\n");
@@ -24,21 +28,51 @@ int seleccionar_nivel() {
     return opcion;
 }
 
+void cargar_mapa(const char *archivo) {
+    FILE *f = fopen(archivo, "r");
+    if (f == NULL) {
+        printf("Error: no se pudo abrir %s\n", archivo);
+        exit(1);
+    }
+    for (int i = 0; i < FILAS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            mapa[i][j] = '#';
+        }
+    }
+
+    int fila = 0;
+    char linea[256];
+    while (fgets(linea, sizeof(linea), f) && fila < FILAS) {
+        int col = 0;
+        for (int j = 0; linea[j] != '\0' && linea[j] != '\n' && col < COLS; j++) {
+            mapa[fila][col] = linea[j];
+            col++;
+        }
+        fila++;
+    }
+    fclose(f);
+}
+
+void imprimir_mapa() {
+    for (int i = 0; i < FILAS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            printf("%c", mapa[i][j]);
+        }
+        printf("%c", '\n');
+    }
+}
+
 int main() {
     int opcion = seleccionar_nivel();
-
     if (opcion == 0) {
         printf("Saliendo del juego.\n");
         return 0;
     }
-
     if (opcion < 1 || opcion > 3) {
         printf("Opcion invalida.\n");
         return 1;
     }
-
-    printf("\nNivel %d seleccionado.\n", opcion);
-    printf("Archivo: %s\n", archivos_niveles[opcion - 1]);
-
+    cargar_mapa(archivos_niveles[opcion - 1]);
+    imprimir_mapa();
     return 0;
 }
