@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
 
 #define FILAS 60
 #define COLS  60
@@ -78,6 +79,14 @@ void jugar_nivel(int num_nivel) {
     imprimir_mapa();    //imprimir el mapa del nivel cargado
     int totalMonedas = contar_caracteres(&mapa[0][0], FILAS * COLS, 'M');
     printf("\nTotal de monedas: %d\n", totalMonedas);
+    char tecla;
+    while (1) { //prueba presion de teclas
+        tecla = _getch();
+        printf("Tecla presionada: %c\n", tecla);
+        if (tecla == 'x' || tecla == 'X') {
+            break;
+        }
+    }
     // logica del nivel
 }
 
