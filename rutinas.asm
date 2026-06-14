@@ -5,6 +5,14 @@ global movimiento, validar_movimiento, contar_caracteres, contar_celdas_libres
 
 section .text
 
+; void movimiento(char *matriz, int columnas, int fila1, int columna1, int fila2, int columna2)
+; rcx = direccion inicial del mapa
+; edx = numero de columnas del mapa
+; r8d = posicion actual del jugador (fila)
+; r9d = posicion actual del jugador (columna)
+; [rsp+40] = posicion nueva (fila)
+; [rsp+48] = posicion nueva (columna)
+
 movimiento:
   mov eax,r8d
   imul eax, edx
@@ -28,16 +36,21 @@ movimiento:
   mov [r11], al 
   ret
 
+; int validar_movimiento(char *mapa, int cols, int fila, int col)
+; rcx = direccion inicial del mapa
+; edx = numero de columnas del mapa
+; r8d = fila a validar
+; r9d = columna a validar
 validar_movimiento:
     mov eax, r8d
-    imul eax, edx
-    add eax, r9d
-    movsx rax, eax
-    mov r10b, [rcx + rax]
+    imul eax, edx   ;eax= fila * columnas
+    add eax, r9d    ; eax = indice de la celda
+    movsx rax, eax  ;extender indice a 64 bits (ya que rcx es un puntero de 64 bits) asi se puede usar para acceder a la celda correcta
+    mov r10b, [rcx + rax]   ; leer caracter del mapa [fila][columna]
     cmp r10b, '#'
     je es_pared
     mov eax, 1
-    ret
+    ret         ;regresa 1 si el movimiento es valido y 0 si no lo es
 
 es_pared:
     mov eax, 0
@@ -64,7 +77,7 @@ contar_caracteres:
     jmp .loop
 
 .fin:
-    ret
+    ret         ;regresa el numero de veces que aparece el caracter solicitado
 
 ; int contar_celdas_libres(char *mapa, int total_celdas)
 ; rcx = direccion del mapa
@@ -86,4 +99,4 @@ contar_celdas_libres:
     jmp .loop_libres
 
 .fin_libres:
-    ret
+    ret         ;regresa el numero de celdas libres '.'
