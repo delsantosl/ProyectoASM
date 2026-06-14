@@ -5,6 +5,7 @@
 #define COLS  60
 
 void movimiento(char *matriz, int columnas, int fila1, int columna1, int fila2, int columna2);
+int validar_movimiento(char *mapa, int cols, int fila, int col);
 
 const char *archivos_niveles[3] = {
     "Niveles/Nivel_1.txt",

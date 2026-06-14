@@ -1,7 +1,7 @@
 bits 64
 default rel
 
-global movimiento
+global movimiento, validar_movimiento
 
 section .text
 
@@ -25,7 +25,22 @@ movimiento:
   mov r8b, [r11]
 
   mov [r10], r8b
-  mov [r11].al 
+  mov [r11], al 
   ret
+
+validar_movimiento:
+    mov eax, r8d
+    imul eax, edx
+    add eax, r9d
+    movsx rax, eax
+    mov r10b, [rcx + rax]
+    cmp r10b, '#'
+    je es_pared
+    mov eax, 1
+    ret
+
+es_pared:
+    mov eax, 0
+    ret
   
 
