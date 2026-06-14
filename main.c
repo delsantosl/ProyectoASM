@@ -82,13 +82,13 @@ void imprimir_mapa(int recol, int total) {
             } else if (mapa[i][j] == '.') {
                 impMapa[pos++] = (char)250;  // camino libre (es un punto centrado)
             } else if (mapa[i][j] == 'P') {
-                impMapa[pos++] = (char)157;  // jugador
+                impMapa[pos++] = (char)143;  // jugador
             } else if (mapa[i][j] == 'M') {
                 impMapa[pos++] = (char)184;  // monedas
             } else if (mapa[i][j] == 'K') {
-                impMapa[pos++] = (char)170;  // llaves
+                impMapa[pos++] = (char)190;  // llaves
             }else if (mapa[i][j] == 'D') {
-                impMapa[pos++] = (char)244;  // puertas
+                impMapa[pos++] = (char)176;  // puertas
             }else if (mapa[i][j] == 'E') {
                 impMapa[pos++] = (char)175;  // salida
             }
