@@ -65,17 +65,26 @@ void imprimir_mapa() {
     }
 }
 
-int main() {
-    int opcion = seleccionar_nivel();
-    if (opcion == 0) {
-        printf("Saliendo del juego.\n");
-        return 0;
-    }
-    if (opcion < 1 || opcion > 3) {
-        printf("Opcion invalida.\n");
-        return 1;
-    }
-    cargar_mapa(archivos_niveles[opcion - 1]);
+void jugar_nivel(int num_nivel) {
+    cargar_mapa(archivos_niveles[num_nivel - 1]);
     imprimir_mapa();
+    // logica del nivel
+}
+
+int main() {
+    int opcion;
+    while (1) {
+        opcion = seleccionar_nivel();
+        if (opcion == 0) {
+            printf("Saliendo del juego.\n");
+            break;
+        }
+        if (opcion < 1 || opcion > 3) {
+            printf("Opcion invalida.\n");
+            continue;
+        }
+        jugar_nivel(opcion);
+    }
+
     return 0;
 }
