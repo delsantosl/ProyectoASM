@@ -4,6 +4,8 @@
 #define FILAS 60
 #define COLS  60
 
+void movimiento(char *matriz, int columnas, int fila1, int columna1, int fila2, int columna2);
+
 const char *archivos_niveles[3] = {
     "Niveles/Nivel_1.txt",
     "Niveles/Nivel_2.txt",
