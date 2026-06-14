@@ -72,11 +72,22 @@ void cargar_mapa(const char *archivo) {
     fclose(f);
 }
 
-void imprimir_mapa(int recol, int total) {
-    char impMapa[FILAS * (COLS * 2 + 1) + 1];  // guarda todo el mapa para imprimirlo, (COLS*2+1) es porque es el caracter del mapa mas el espacio mas el salto de linea
+void imprimir_mapa(int recol, int total, int jFila, int jCol) {
+    int tamCamara=20;
+    int centro= tamCamara/2;
+
+    int inicioFila = jFila -centro;
+    int inicioCol= jCol -centro;
+
+    if(inicioFila < 0) inicioFila=0;
+    if(inicioCol < 0) inicioCol=0;
+    if(inicioFila + tamCamara>FILAS)inicioFila =FILAS - tamCamara;
+    if(inicioCol +tamCamara> COLS)inicioCol =COLS -tamCamara;
+
+    char impMapa[20 * (20 * 2 + 1) + 1];  // guarda todo el mapa para imprimirlo, (COLS*2+1) es porque es el caracter del mapa mas el espacio mas el salto de linea
     int pos = 0;
-    for (int i = 0; i < FILAS; i++) {
-        for (int j = 0; j < COLS; j++) {
+    for (int i = inicioFila; i < inicioFila+tamCamara; i++) {
+        for (int j = inicioCol; j < inicioCol+tamCamara; j++) {
             if (mapa[i][j] == '#') {
                 impMapa[pos++] = (char)254;  // bloque solido para pared
             } else if (mapa[i][j] == '.') {
@@ -126,7 +137,7 @@ void jugar_nivel(int num_nivel) {
     buscar_jugador(&jugador_fila, &jugador_col);
 
     int Mrecolectadas=0;
-    imprimir_mapa(Mrecolectadas,totalMonedas);    //imprimir el mapa del nivel cargado
+    imprimir_mapa(Mrecolectadas,totalMonedas,jugador_fila,jugador_col);    //imprimir el mapa del nivel cargado
     int nueva_fila, nueva_col;
     char tecla;
     while (1) { //prueba presion de teclas
@@ -148,7 +159,7 @@ void jugar_nivel(int num_nivel) {
             jugador_fila = nueva_fila;
             jugador_col  = nueva_col;
             system("cls");
-            imprimir_mapa(Mrecolectadas,totalMonedas);
+            imprimir_mapa(Mrecolectadas,totalMonedas,jugador_fila,jugador_col);
         }
     }
     // logica del nivel
