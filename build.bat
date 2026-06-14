@@ -1,5 +1,5 @@
 @echo off
 
-gcc main.c juego.c -o BitQuest.exe
+gcc main.c -o BitQuest.exe
 
 BitQuest.exe
