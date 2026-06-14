@@ -81,20 +81,46 @@ void imprimir_mapa() {
     }
 }
 
+// buscar la posicion inicial del jugador en el mapa
+void buscar_jugador(int *fila, int *col) {
+    for (int i = 0; i < FILAS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (mapa[i][j] == 'P') {
+                *fila = i;
+                *col = j;
+                return;
+            }
+        }
+    }
+}
+
 //jugar al nivel seleccionado
 void jugar_nivel(int num_nivel) {
     cargar_mapa(archivos_niveles[num_nivel - 1]);   //cargar el mapa del nivel seleccionado
     int celdasLib = contar_celdas_libres(&mapa[0][0], FILAS * COLS);
     printf("\nTotal de celdas libres: %d\n\n", celdasLib);
-    imprimir_mapa();    //imprimir el mapa del nivel cargado
     int totalMonedas = contar_caracteres(&mapa[0][0], FILAS * COLS, 'M');
     printf("\nTotal de monedas: %d\n", totalMonedas);
+    int jugador_fila, jugador_col;
+    buscar_jugador(&jugador_fila, &jugador_col);
+    imprimir_mapa();    //imprimir el mapa del nivel cargado
+    int nueva_fila, nueva_col;
     char tecla;
     while (1) { //prueba presion de teclas
         tecla = _getch();
-        printf("Tecla presionada: %c\n", tecla);
-        if (tecla == 'x' || tecla == 'X') {
-            break;
+        nueva_fila = jugador_fila;
+        nueva_col  = jugador_col;
+        if (tecla == 'w' || tecla == 'W') nueva_fila--;         //moverse hacia arriba
+        else if (tecla == 's' || tecla == 'S') nueva_fila++;    //moverse hacia abajo
+        else if (tecla == 'a' || tecla == 'A') nueva_col--;     //moverse hacia la izquierda
+        else if (tecla == 'd' || tecla == 'D') nueva_col++;     //moverse hacia la derecha
+        else if (tecla == 'q' || tecla == 'Q') break;           //salir del nivel (volver al menu principal)
+        else continue;                                          //si se presiona otra tecla no hace nada
+        if (validar_movimiento(&mapa[0][0], COLS, nueva_fila, nueva_col)) {
+            movimiento(&mapa[0][0], COLS, jugador_fila, jugador_col, nueva_fila, nueva_col);
+            jugador_fila = nueva_fila;
+            jugador_col  = nueva_col;
+            imprimir_mapa();
         }
     }
     // logica del nivel
