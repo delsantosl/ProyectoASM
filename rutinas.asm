@@ -1,7 +1,7 @@
 bits 64
 default rel
 
-global movimiento, validar_movimiento, contar_caracteres
+global movimiento, validar_movimiento, contar_caracteres, contar_celdas_libres
 
 section .text
 
@@ -64,4 +64,26 @@ contar_caracteres:
     jmp .loop
 
 .fin:
+    ret
+
+; int contar_celdas_libres(char *mapa, int total_celdas)
+; rcx = direccion del mapa
+; edx = total de celdas
+contar_celdas_libres:
+    xor eax, eax        ; contador = 0
+    xor r9d, r9d        ; indice = 0
+
+.loop_libres:
+    cmp r9d, edx
+    jge .fin_libres
+    mov r10b, [rcx + r9]
+    cmp r10b, '.'
+    jne .siguiente_libre
+    inc eax
+
+.siguiente_libre:
+    inc r9d
+    jmp .loop_libres
+
+.fin_libres:
     ret

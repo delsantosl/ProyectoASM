@@ -7,6 +7,7 @@
 void movimiento(char *matriz, int columnas, int fila1, int columna1, int fila2, int columna2);
 int validar_movimiento(char *mapa, int cols, int fila, int col);
 int contar_caracteres(char *mapa, int total_celdas, char caracter);
+int contar_celdas_libres(char *mapa, int total_celdas);
 
 const char *archivos_niveles[3] = {
     "Niveles/Nivel_1.txt",
@@ -68,6 +69,8 @@ void imprimir_mapa() {
 
 void jugar_nivel(int num_nivel) {
     cargar_mapa(archivos_niveles[num_nivel - 1]);
+    int celdasLib = contar_celdas_libres(&mapa[0][0], FILAS * COLS);
+    printf("\nTotal de celdas libres: %d\n\n", celdasLib);
     imprimir_mapa();
     int totalMonedas = contar_caracteres(&mapa[0][0], FILAS * COLS, 'M');
     printf("\nTotal de monedas: %d\n", totalMonedas);
