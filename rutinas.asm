@@ -1,7 +1,7 @@
 bits 64
 default rel
 
-global movimiento, validar_movimiento
+global movimiento, validar_movimiento, contar_caracteres
 
 section .text
 
@@ -43,4 +43,25 @@ es_pared:
     mov eax, 0
     ret
   
+; int contar_caracteres(char *mapa, int total_celdas, char caracter)
+; rcx = direccion del mapa
+; edx = total de celdas
+; r8b = caracter a buscar
+contar_caracteres:
+    xor eax, eax        ; contador = 0
+    xor r9d, r9d        ; indice = 0
 
+.loop:
+    cmp r9d, edx        ; si indice >= total_celdas, terminar
+    jge .fin
+    mov r10b, [rcx + r9]  ; caracter actual del mapa
+    cmp r10b, r8b          ; comparar con el caracter buscado
+    jne .siguiente
+    inc eax             ; encontrado, incrementar contador
+
+.siguiente:
+    inc r9d
+    jmp .loop
+
+.fin:
+    ret
