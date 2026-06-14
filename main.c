@@ -60,7 +60,7 @@ void cargar_mapa(const char *archivo) {
 void imprimir_mapa() {
     for (int i = 0; i < FILAS; i++) {
         for (int j = 0; j < COLS; j++) {
-            printf("%c", mapa[i][j]);
+            printf("%c ", mapa[i][j]);
         }
         printf("%c", '\n');
     }
