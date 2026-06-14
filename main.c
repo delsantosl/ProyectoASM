@@ -77,7 +77,21 @@ void imprimir_mapa(int recol, int total) {
     int pos = 0;
     for (int i = 0; i < FILAS; i++) {
         for (int j = 0; j < COLS; j++) {
-            impMapa[pos++] = mapa[i][j];    // caracter del mapa
+            if (mapa[i][j] == '#') {
+                impMapa[pos++] = (char)254;  // bloque solido para pared
+            } else if (mapa[i][j] == '.') {
+                impMapa[pos++] = (char)250;  // camino libre (es un punto centrado)
+            } else if (mapa[i][j] == 'P') {
+                impMapa[pos++] = (char)157;  // jugador
+            } else if (mapa[i][j] == 'M') {
+                impMapa[pos++] = (char)184;  // monedas
+            } else if (mapa[i][j] == 'K') {
+                impMapa[pos++] = (char)170;  // llaves
+            }else if (mapa[i][j] == 'D') {
+                impMapa[pos++] = (char)244;  // puertas
+            }else if (mapa[i][j] == 'E') {
+                impMapa[pos++] = (char)175;  // salida
+            }
             impMapa[pos++] = ' ';           // espacio para que el mapa no se vea alargado
         }
         impMapa[pos++] = '\n';
