@@ -11,6 +11,7 @@ int validar_movimiento(char *mapa, int cols, int fila, int col);
 int contar_caracteres(char *mapa, int total_celdas, char caracter);
 int contar_celdas_libres(char *mapa, int total_celdas);
 int calcular_puntaje(int monedas, int pasos, int niveles);
+int detectar_objeto(char *mapa, int cols, int fila, int col, char objeto);
 
 //Arreglo de niveles para seleccionar el nivel que se quiere jugar
 const char *archivos_niveles[3] = {
@@ -20,6 +21,15 @@ const char *archivos_niveles[3] = {
 };
 
 char mapa[FILAS][COLS];
+
+char mapa[FILAS][COLS];
+
+// Variables globales para el resumen final de BitQuest
+int global_monedas_recolectadas = 0;
+int global_monedas_totales = 0;
+int global_pasos = 0;
+int global_niveles_completados = 0;
+int global_puntaje = 0;
 
 //Menu principal (seleccion de niveles)
 int seleccionar_nivel() {
@@ -129,7 +139,7 @@ void buscar_jugador(int *fila, int *col) {
 }
 
 //jugar al nivel seleccionado
-void jugar_nivel(int num_nivel) {
+int jugar_nivel(int num_nivel) {
     cargar_mapa(archivos_niveles[num_nivel - 1]);   //cargar el mapa del nivel seleccionado
     int celdasLib = contar_celdas_libres(&mapa[0][0], FILAS * COLS);
     printf("\nTotal de celdas libres: %d\n\n", celdasLib);
@@ -162,13 +172,13 @@ void jugar_nivel(int num_nivel) {
             char destino = mapa[nueva_fila][nueva_col];
             int puede_pasar = 1;
 
-            // Logica de la Puerta ('D')
-            if (destino == 'D') {
+            // Lógica de la Puerta ('D')
+            if (detectar_objeto(&mapa[0][0], COLS, nueva_fila, nueva_col, 'D')) {
                 if (llaves > 0) {
-                    llaves--;                   // Consumir una llave
-                    mapa[nueva_fila][nueva_col] = '.'; // La puerta se abre permanentemente
+                    llaves--;                   
+                    mapa[nueva_fila][nueva_col] = '.'; 
                 } else {
-                    puede_pasar = 0;            // Bloquear paso si no hay llaves
+                    puede_pasar = 0;            
                 }
             }
 
@@ -177,19 +187,19 @@ void jugar_nivel(int num_nivel) {
                 pasos++;
                 
                 // Si pisa una Moneda
-                if (destino == 'M') {
+                if (detectar_objeto(&mapa[0][0], COLS, nueva_fila, nueva_col, 'M')) {
                     Mrecolectadas++;
                     mapa[nueva_fila][nueva_col] = '.';
                 } 
                 // Si pisa una Llave ('K')
-                else if (destino == 'K') {
+                else if (detectar_objeto(&mapa[0][0], COLS, nueva_fila, nueva_col, 'K')) {
                     llaves++;
-                    mapa[nueva_fila][nueva_col] = '.'; // Recoger llave
+                    mapa[nueva_fila][nueva_col] = '.'; 
                 } 
                 // Si pisa la Salida ('E')
-                else if (destino == 'E') {
+                else if (detectar_objeto(&mapa[0][0], COLS, nueva_fila, nueva_col, 'E')) {
                     nivel_completado = 1;
-                    break; // Termina el nivel exitosamente
+                    break; 
                 }
 
                 // Mover fisicamente al jugador en la matriz 
@@ -221,25 +231,47 @@ void jugar_nivel(int num_nivel) {
     printf("---------------------------------\n");
     printf(" TU PUNTAJE FINAL:    %d pts!\n", puntaje_final);
     printf("=================================\n");
-    printf("\nPresiona cualquier tecla para volver al menu principal...\n");
+    printf("\nPresiona cualquier tecla para avanzar al siguiente nivel...\n");
     _getch();
     system("cls");
+
+    return nivel_completado;
     // logica del nivel
 }
 
 int main() {
-    int opcion;
-    while (1) {     //ciclo infinito
-        opcion = seleccionar_nivel();
-        if (opcion == 0) {  //salir del juego
-            printf("Saliendo del juego.\n");
+    system("cls");
+    printf("=================================\n");
+    printf("            BitQuest\n");
+    printf("=================================\n");
+    printf("\nPresiona cualquier tecla para comenzar tu aventura...\n");
+    _getch();
+
+    // Recorrer los niveles de corrido (del 1 al 3)
+    for (int nivel_actual = 1; nivel_actual <= 3; nivel_actual++) {
+        int superado = jugar_nivel(nivel_actual);
+        
+        // Si el jugador abandona con 'Q' (superado == 0), salimos del juego
+        if (!superado) {
+            printf("\nHas abandonado la partida. Saliendo del juego...\n");
             break;
         }
-        if (opcion < 1 || opcion > 3) { //opciones fuera del rango
-            printf("Opcion invalida.\n");
-            continue;
-        }
-        jugar_nivel(opcion);    //jugar al nivel seleccionado
     }
+
+    // Si logró pasar los 3 niveles, mostramos el Resumen Final
+    if (global_niveles_completados == 3) {
+        system("cls");
+        printf("=================================\n");
+        printf("        JUEGO COMPLETADO\n");
+        printf("=================================\n");
+        printf(" Monedas totales:     %d / %d\n", global_monedas_recolectadas, global_monedas_totales);
+        printf(" Pasos totales:       %d\n", global_pasos);
+        printf(" Niveles completados: %d\n", global_niveles_completados);
+        printf(" Puntaje final:       %d pts!\n", global_puntaje);
+        printf("=================================\n");
+        printf("\nPresiona cualquier tecla para salir...\n");
+        _getch();
+    }
+
     return 0;
 }

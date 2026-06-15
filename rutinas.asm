@@ -1,7 +1,7 @@
 bits 64
 default rel
 
-global movimiento, validar_movimiento, contar_caracteres, contar_celdas_libres, calcular_puntaje
+global movimiento, validar_movimiento, contar_caracteres, contar_celdas_libres, calcular_puntaje, detectar_objeto
 
 section .text
 
@@ -127,4 +127,31 @@ calcular_puntaje:
     xor eax, eax            ; Devolver 0 si el puntaje calculado es negativo
 
 .finalizar:
+    ret
+
+detectar_objeto:
+    ; 1. Calcular el índice: (fila * columnas) + columna
+    mov eax, r8d
+    imul eax, edx
+    add eax, r9d
+
+    ; 2. Extender a 64 bits para usarlo como puntero de memoria
+    movsx rax, eax
+    
+    ; 3. Leer el carácter actual de la celda en el mapa
+    mov r10b, [rcx + rax]
+
+    ; 4. Leer el carácter buscado desde la pila
+    mov r11b, [rsp + 40]
+
+    ; 5. Comparar si la celda tiene el objeto que buscamos
+    cmp r10b, r11b
+    je .es_el_objeto
+
+.no_es:
+    mov eax, 0          ; Retornar 0 Si no se encuentra
+    ret
+
+.es_el_objeto:
+    mov eax, 1          ; Retornar 1 Si sí se encuentra
     ret
