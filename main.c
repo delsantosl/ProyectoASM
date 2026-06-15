@@ -10,6 +10,7 @@ void movimiento(char *matriz, int columnas, int fila1, int columna1, int fila2, 
 int validar_movimiento(char *mapa, int cols, int fila, int col);
 int contar_caracteres(char *mapa, int total_celdas, char caracter);
 int contar_celdas_libres(char *mapa, int total_celdas);
+int calcular_puntaje(int monedas, int pasos, int niveles);
 
 //Arreglo de niveles para seleccionar el nivel que se quiere jugar
 const char *archivos_niveles[3] = {
@@ -72,7 +73,8 @@ void cargar_mapa(const char *archivo) {
     fclose(f);
 }
 
-void imprimir_mapa(int recol, int total, int jFila, int jCol) {
+
+void imprimir_mapa(int recol, int total, int llaves, int jFila, int jCol) {
     int tamCamara=20;
     int centro= tamCamara/2;
 
@@ -107,7 +109,7 @@ void imprimir_mapa(int recol, int total, int jFila, int jCol) {
         }
         impMapa[pos++] = '\n';
     }
-    printf( "Monedas %d / %d", recol, total);
+    printf( "Monedas: %d / %d  |  Llaves: %d", recol, total, llaves);
     printf("\n");
     impMapa[pos] = '\0';    //terminar la cadena
     fputs(impMapa, stdout); //imprimir todo de una vez para mayor velocidad
@@ -137,9 +139,14 @@ void jugar_nivel(int num_nivel) {
     buscar_jugador(&jugador_fila, &jugador_col);
 
     int Mrecolectadas=0;
-    imprimir_mapa(Mrecolectadas,totalMonedas,jugador_fila,jugador_col);    //imprimir el mapa del nivel cargado
+    int llaves = 0;            // Contador de llaves en inventario
+    int pasos = 0;             // Contador de pasos realizados
+    int nivel_completado = 0;  // Bandera para saber si cruzó la salida 'E'
+
+    imprimir_mapa(Mrecolectadas,totalMonedas,llaves,jugador_fila,jugador_col);    //imprimir el mapa del nivel cargado
     int nueva_fila, nueva_col;
     char tecla;
+
     while (1) { //prueba presion de teclas
         tecla = _getch();
         nueva_fila = jugador_fila;
@@ -149,19 +156,74 @@ void jugar_nivel(int num_nivel) {
         else if (tecla == 'a' || tecla == 'A') nueva_col--;     //moverse hacia la izquierda
         else if (tecla == 'd' || tecla == 'D') nueva_col++;     //moverse hacia la derecha
         else if (tecla == 'q' || tecla == 'Q') break;           //salir del nivel (volver al menu principal)
-        else continue;                                          //si se presiona otra tecla no hace nada
+        else continue; 
+                                                 //si se presiona otra tecla no hace nada
+        // 1. Validar movimiento básico (que no sea pared '#')
         if (validar_movimiento(&mapa[0][0], COLS, nueva_fila, nueva_col)) {
-            if(mapa[nueva_fila][nueva_col]== 'M'){
-                Mrecolectadas++;
-                mapa[nueva_fila][nueva_col]='.';
+            char destino = mapa[nueva_fila][nueva_col];
+            int puede_pasar = 1;
+
+            // Lógica de la Puerta ('D')
+            if (destino == 'D') {
+                if (llaves > 0) {
+                    llaves--;                   // Consumir una llave
+                    mapa[nueva_fila][nueva_col] = '.'; // La puerta se abre permanentemente
+                } else {
+                    puede_pasar = 0;            // Bloquear paso si no hay llaves
+                }
             }
-            movimiento(&mapa[0][0], COLS, jugador_fila, jugador_col, nueva_fila, nueva_col);
-            jugador_fila = nueva_fila;
-            jugador_col  = nueva_col;
-            system("cls");
-            imprimir_mapa(Mrecolectadas,totalMonedas,jugador_fila,jugador_col);
+
+            // Procesar movimiento si el paso es permitido
+            if (puede_pasar) {
+                pasos++;
+                
+                // Si pisa una Moneda
+                if (destino == 'M') {
+                    Mrecolectadas++;
+                    mapa[nueva_fila][nueva_col] = '.';
+                } 
+                // Si pisa una Llave ('K')
+                else if (destino == 'K') {
+                    llaves++;
+                    mapa[nueva_fila][nueva_col] = '.'; // Recoger llave
+                } 
+                // Si pisa la Salida ('E')
+                else if (destino == 'E') {
+                    nivel_completado = 1;
+                    break; // Termina el nivel exitosamente
+                }
+
+                // Mover físicamente al jugador en la matriz 
+                movimiento(&mapa[0][0], COLS, jugador_fila, jugador_col, nueva_fila, nueva_col);
+                jugador_fila = nueva_fila;
+                jugador_col  = nueva_col;
+                
+                system("cls");
+                imprimir_mapa(Mrecolectadas, totalMonedas, llaves, jugador_fila, jugador_col);
+            }
         }
     }
+
+    // Mostrar pantalla de fin de nivel con puntaje 
+    system("cls");
+    // Si completó el nivel pasamos el número del nivel; si se rindió con 'Q', pasa 0
+    int puntaje_final = calcular_puntaje(Mrecolectadas, pasos, nivel_completado ? num_nivel : 0);
+    
+    printf("=================================\n");
+    if (nivel_completado) {
+        printf("    ¡Felicidades! NIVEL COMPLETADO\n");
+    } else {
+        printf("       NIVEL ABANDONADO (Q)\n");
+    }
+    printf("=================================\n");
+    printf(" Monedas recolectadas: %d / %d\n", Mrecolectadas, totalMonedas);
+    printf(" Pasos realizados:     %d\n", pasos);
+    printf(" Nivel completado:     %s\n", nivel_completado ? "SI" : "NO");
+    printf("---------------------------------\n");
+    printf(" ¡TU PUNTAJE FINAL:    %d pts!\n", puntaje_final);
+    printf("=================================\n");
+    printf("\nPresiona cualquier tecla para volver al menu principal...\n");
+    _getch();
     // logica del nivel
 }
 

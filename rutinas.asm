@@ -1,7 +1,7 @@
 bits 64
 default rel
 
-global movimiento, validar_movimiento, contar_caracteres, contar_celdas_libres
+global movimiento, validar_movimiento, contar_caracteres, contar_celdas_libres, calcular_puntaje
 
 section .text
 
@@ -94,3 +94,37 @@ contar_celdas_libres:
 
 .fin_libres:
     ret         ;regresa el numero de celdas libres '.'
+
+
+
+
+; int calcular_puntaje(int monedas, int pasos, int niveles)
+; Convención de llamadas de Windows x64:
+; rcx = monedas 
+; rdx = pasos   
+; r8  = niveles 
+; RAX = Retorno del resultado
+;
+; Fórmula: Puntaje = (Monedas * 100) + (Niveles * 500) - (Pasos * 2)
+calcular_puntaje:
+    ; 1. Calcular puntos por monedas (Monedas * 100)
+    mov rax, rcx            ; RAX = monedas
+    imul rax, 100           ; RAX = monedas * 100
+
+    ; 2. Calcular puntos por niveles y sumarlos (Niveles * 500)
+    mov r10, r8             ; R10 = niveles
+    imul r10, 500           ; R10 = niveles * 500
+    add rax, r10            ; RAX = (monedas * 100) + (niveles * 500)
+
+    ; 3. Calcular penalización por pasos y restarla (Pasos * 2)
+    mov r11, rdx            ; R11 = pasos
+    imul r11, 2             ; R11 = pasos * 2
+    sub rax, r11            ; RAX = total_parcial - (pasos * 2)
+
+    ; 4. Control de errores: Si el puntaje es menor a 0, lo forzamos a 0
+    cmp rax, 0
+    jge .finalizar
+    xor eax, eax            ; Devolver 0 si el puntaje calculado es negativo
+
+.finalizar:
+    ret
