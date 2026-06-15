@@ -74,7 +74,7 @@ void cargar_mapa(const char *archivo) {
 }
 
 
-void imprimir_mapa(int recol, int total, int llaves, int jFila, int jCol) {
+void imprimir_mapa(int recol, int total, int llaves, int jFila, int jCol, int pasos) {
     int tamCamara=20;
     int centro= tamCamara/2;
 
@@ -109,7 +109,7 @@ void imprimir_mapa(int recol, int total, int llaves, int jFila, int jCol) {
         }
         impMapa[pos++] = '\n';
     }
-    printf( "Monedas: %d / %d  |  Llaves: %d", recol, total, llaves);
+    printf( "Monedas: %d / %d  |  Llaves: %d  |  Pasos: %d", recol, total, llaves, pasos);
     printf("\n");
     impMapa[pos] = '\0';    //terminar la cadena
     fputs(impMapa, stdout); //imprimir todo de una vez para mayor velocidad
@@ -143,11 +143,11 @@ void jugar_nivel(int num_nivel) {
     int pasos = 0;             // Contador de pasos realizados
     int nivel_completado = 0;  // Bandera para saber si cruzó la salida 'E'
 
-    imprimir_mapa(Mrecolectadas,totalMonedas,llaves,jugador_fila,jugador_col);    //imprimir el mapa del nivel cargado
+    imprimir_mapa(Mrecolectadas,totalMonedas,llaves,jugador_fila,jugador_col, pasos);    //imprimir el mapa del nivel cargado
     int nueva_fila, nueva_col;
     char tecla;
 
-    while (1) { //prueba presion de teclas
+    while (1) { 
         tecla = _getch();
         nueva_fila = jugador_fila;
         nueva_col  = jugador_col;
@@ -156,14 +156,13 @@ void jugar_nivel(int num_nivel) {
         else if (tecla == 'a' || tecla == 'A') nueva_col--;     //moverse hacia la izquierda
         else if (tecla == 'd' || tecla == 'D') nueva_col++;     //moverse hacia la derecha
         else if (tecla == 'q' || tecla == 'Q') break;           //salir del nivel (volver al menu principal)
-        else continue; 
-                                                 //si se presiona otra tecla no hace nada
-        // 1. Validar movimiento básico (que no sea pared '#')
+        else continue;      //si se presiona otra tecla no hace nada
+        // 1. Validar movimiento basico (que no sea pared '#')
         if (validar_movimiento(&mapa[0][0], COLS, nueva_fila, nueva_col)) {
             char destino = mapa[nueva_fila][nueva_col];
             int puede_pasar = 1;
 
-            // Lógica de la Puerta ('D')
+            // Logica de la Puerta ('D')
             if (destino == 'D') {
                 if (llaves > 0) {
                     llaves--;                   // Consumir una llave
@@ -193,25 +192,25 @@ void jugar_nivel(int num_nivel) {
                     break; // Termina el nivel exitosamente
                 }
 
-                // Mover físicamente al jugador en la matriz 
+                // Mover fisicamente al jugador en la matriz 
                 movimiento(&mapa[0][0], COLS, jugador_fila, jugador_col, nueva_fila, nueva_col);
                 jugador_fila = nueva_fila;
                 jugador_col  = nueva_col;
                 
                 system("cls");
-                imprimir_mapa(Mrecolectadas, totalMonedas, llaves, jugador_fila, jugador_col);
+                imprimir_mapa(Mrecolectadas, totalMonedas, llaves, jugador_fila, jugador_col, pasos);
             }
         }
     }
 
     // Mostrar pantalla de fin de nivel con puntaje 
     system("cls");
-    // Si completó el nivel pasamos el número del nivel; si se rindió con 'Q', pasa 0
+    // Si completó el nivel pasamos el número del nivel, si se rindio con 'Q', pasa 0
     int puntaje_final = calcular_puntaje(Mrecolectadas, pasos, nivel_completado ? num_nivel : 0);
     
     printf("=================================\n");
     if (nivel_completado) {
-        printf("    ¡Felicidades! NIVEL COMPLETADO\n");
+        printf("    Felicidades! NIVEL COMPLETADO\n");
     } else {
         printf("       NIVEL ABANDONADO (Q)\n");
     }
@@ -220,10 +219,11 @@ void jugar_nivel(int num_nivel) {
     printf(" Pasos realizados:     %d\n", pasos);
     printf(" Nivel completado:     %s\n", nivel_completado ? "SI" : "NO");
     printf("---------------------------------\n");
-    printf(" ¡TU PUNTAJE FINAL:    %d pts!\n", puntaje_final);
+    printf(" TU PUNTAJE FINAL:    %d pts!\n", puntaje_final);
     printf("=================================\n");
     printf("\nPresiona cualquier tecla para volver al menu principal...\n");
     _getch();
+    system("cls");
     // logica del nivel
 }
 
