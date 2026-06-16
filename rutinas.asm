@@ -99,7 +99,6 @@ contar_celdas_libres:
 
 
 ; int calcular_puntaje(int monedas, int pasos, int niveles)
-; Convención de llamadas de Windows x64:
 ; rcx = monedas 
 ; rdx = pasos   
 ; r8  = niveles 

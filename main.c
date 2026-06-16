@@ -222,8 +222,6 @@ int jugar_nivel(int num_nivel) {
         }
     } // FIN del ciclo while (1)
 
-    // CORREGIDO: Todo este bloque de código se movió fuera del bucle 'while (1)'
-    // para que no detenga el juego en tu primer paso.
     system("cls");
     int puntaje_final = calcular_puntaje(Mrecolectadas, pasos, nivel_completado ? num_nivel : 0);
     
