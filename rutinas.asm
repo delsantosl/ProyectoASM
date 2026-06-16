@@ -12,7 +12,6 @@ section .text
 ; r9d = posicion actual del jugador (columna)
 ; [rsp+40] = posicion nueva (fila)
 ; [rsp+48] = posicion nueva (columna)
-
 movimiento:
   mov eax,r8d
   imul eax, edx
@@ -94,8 +93,6 @@ contar_celdas_libres:
 
 .fin_libres:
     ret         ;regresa el numero de celdas libres '.'
-
-
 
 
 ; int calcular_puntaje(int monedas, int pasos, int niveles)

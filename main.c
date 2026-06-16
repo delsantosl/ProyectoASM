@@ -29,33 +29,6 @@ int global_pasos = 0;
 int global_niveles_completados = 0;
 int global_puntaje = 0;
 
-// Menu principal (seleccion de niveles)
-int seleccionar_nivel() {
-    int opcion;
-    char buf[100];  // variable auxiliar para validar opciones
-    printf("=================================\n");
-    printf("            BitQuest\n");
-    printf("=================================\n");
-    printf("Selecciona un nivel:\n");
-    printf("  1. Nivel 1\n");
-    printf("  2. Nivel 2\n");
-    printf("  3. Nivel 3\n");
-    printf("  0. Salir\n");
-    printf("=================================\n");
-    printf("Opcion: ");
-    // validacion de la opcion seleccionada
-    fgets(buf, sizeof(buf), stdin);
-    opcion = atoi(buf);
-    if (buf[0] >= '1' && buf[0] <= '3') {
-        opcion = atoi(buf);
-    } else if (buf[0] == '0') {
-        opcion = 0;
-    } else {
-        opcion = -1;  // cualquier cosa que no sea numero es invalida
-    }
-    return opcion;
-}
-
 void cargar_mapa(const char *archivo) {
     FILE *f = fopen(archivo, "r");
     if (f == NULL) {
@@ -80,7 +53,6 @@ void cargar_mapa(const char *archivo) {
     }
     fclose(f);
 }
-
 
 void imprimir_mapa(int recol, int total, int llaves, int jFila, int jCol, int pasos) {
     int tamCamara = 20;
@@ -221,7 +193,6 @@ int jugar_nivel(int num_nivel) {
             }
         }
     } // FIN del ciclo while (1)
-
     system("cls");
     int puntaje_final = calcular_puntaje(Mrecolectadas, pasos, nivel_completado ? num_nivel : 0);
     
